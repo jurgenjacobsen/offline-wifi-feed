@@ -1,3 +1,5 @@
 node_modules/
  !saved-data
  !data
+stylelint_output.txt
+stylelint_result.txt

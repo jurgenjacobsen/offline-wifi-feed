@@ -22,7 +22,7 @@ jobs:
 
       - name: Install Linters
         run: |
-          npm install -g htmlhint stylelint stylelint-config-standard
+          npm install -g htmlhint stylelint stylelint-config-standard postcss-html
 
       - name: Verify HTML Syntax
         # Checks for unclosed tags or missing doctype which can break popups
