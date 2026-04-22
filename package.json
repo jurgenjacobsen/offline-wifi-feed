@@ -1,0 +1,34 @@
+{
+  "name": "offline-wifi-feed",
+  "version": "1.0.0",
+  "description": "An offline WiFi feed for Arduino devices, allowing users to access content without an internet connection.",
+  "main": "offline-wifi-feed.ino",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jurgenjacobsen/offline-wifi-feed.git"
+  },
+  "keywords": [
+    "arduino",
+    "wifi",
+    "feed",
+    "offline",
+    "reading"
+  ],
+  "scripts": {
+    "prettier": "prettier --check \"src/**/*.html\" \"package.json\" \".prettierrc\"",
+    "prettier:write": "prettier --write \"src/**/*.html\" \"package.json\" \".prettierrc\"",
+    "minify": "html-minifier-terser --input-dir ./src --output-dir ./data --collapse-whitespace --collapse-boolean-attributes --remove-comments --remove-empty-attributes --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-style-link-type-attributes --remove-attribute-quotes --sort-attributes --sort-class-name --use-short-doctype --minify-css true --minify-js true"
+  },
+  "author": "jurgenjacobsen",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jurgenjacobsen/offline-wifi-feed/issues"
+  },
+  "homepage": "https://github.com/jurgenjacobsen/offline-wifi-feed#readme",
+  "devDependencies": {
+    "prettier": "3.8.3"
+  },
+  "dependencies": {
+    "html-minifier-terser": "^7.2.0"
+  }
+}
