@@ -1,3 +1,5 @@
+![Repository Banner](/.github/assets/banner.png)
+
 [![Arduino Code Quality](https://github.com/jurgenjacobsen/offline-wifi-feed/actions/workflows/arduino-integrity.yml/badge.svg)](https://github.com/jurgenjacobsen/offline-wifi-feed/actions/workflows/arduino-integrity.yml)
 [![Web Integrity Check](https://github.com/jurgenjacobsen/offline-wifi-feed/actions/workflows/web-integrity.yml/badge.svg)](https://github.com/jurgenjacobsen/offline-wifi-feed/actions/workflows/web-integrity.yml)
 [![wakatime](https://wakatime.com/badge/user/010adc07-6382-419f-87bc-0b3f507ee495/project/e8943d84-a442-48c2-9ce5-bfa9577436ec.svg)](https://wakatime.com/badge/user/010adc07-6382-419f-87bc-0b3f507ee495/project/e8943d84-a442-48c2-9ce5-bfa9577436ec)

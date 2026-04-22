@@ -7,21 +7,23 @@
     <style>
       :root {
         --border: #d1cfc5;
+        --highlight: #5162D7;
+        --slate-black: #141413;
+        --intermediary: #f0eee6;
+        --opaque: #555;
       }
-
       body {
         font-family:
           -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
           Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
         background-color: #faf9f5;
-        color: #141413;
+        color: var(--slate-black);
         margin: 0;
         padding: 0;
       }
       .hero {
         padding: 10px 25px 10px 25px;
       }
-
       hr {
         border-top: 0.5px solid var(--border);
         border-radius: 5px;
@@ -30,18 +32,17 @@
         margin: 10px;
         padding: 0px 10px 15px 10px;
       }
-
       h1 {
-        color: #007bff;
+        color: var(--highlight);
         font-weight: 800;
       }
       h2 {
-        color: #141413;
+        color: var(--slate-black);
         font-weight: 700;
         margin-bottom: 0;
       }
       h3 {
-        color: #141413;
+        color: var(--slate-black);
         font-weight: 600;
         margin: 0;
       }
@@ -52,11 +53,11 @@
       }
       span {
         font-size: 0.8em;
-        color: #555;
+        color: var(--opaque);
         font-weight: 600;
       }
       footer {
-        background-color: #f0eee6;
+        background-color: var(--intermediary);
         padding: 15px;
       } 
     </style>
