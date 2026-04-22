@@ -1,1 +1,0 @@
-Device: lolin d1 mini 
