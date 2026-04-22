@@ -1,98 +1,62 @@
-// Captive portal with (arduino) OTA + LittleFS
-// Adapted from https://git.vvvvvvaria.org/then/ESP8266-captive-ota-spiffs
-
-#include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <ESP8266mDNS.h>
-#include <WiFiUdp.h>
+#include <DNSServer.h>
 #include <ESP8266WebServer.h>
-#include "./DNSServer.h" // Dns server
-#include <LittleFS.h> // LittleFS
 
-DNSServer dnsServer;
 const byte DNS_PORT = 53;
-
+// We use 8.8.8.8 to trick Android devices that hardcode Google DNS
+IPAddress apIP(8, 8, 8, 8); 
+DNSServer dnsServer;
 ESP8266WebServer server(80);
 
-#ifndef STASSID
-#define STASSID "Free Reading Wifi"
-#endif
+const char index_html[] PROGMEM = R"raw(
+<!DOCTYPE html><html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WiFi Portal</title>
+<style>body{font-family:sans-serif;text-align:center;padding:50px;}h1{color:#007bff;}</style>
+</head><body>
+<h1>Portal Connected</h1>
+<p>You are now connected to the D1 Mini local network.</p>
+</body></html>)raw";
 
-IPAddress apIP(192, 168, 4, 1);
-const char* ssid = STASSID;
+// This is the "Magic" function. It tells the phone: 
+// "Whatever you were looking for, it's actually at my IP."
+void redirectToPortal() {
+  server.sendHeader("Location", String("http://") + WiFi.softAPIP().toString(), true);
+  server.send(302, "text/plain", ""); 
+}
+
+void handleRoot() {
+  server.send(200, "text/html", index_html);
+}
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("Booting");
 
   WiFi.mode(WIFI_AP);
+  // We set the gateway to 8.8.8.8 to catch hardcoded Google DNS requests
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-  WiFi.softAP(ssid);
-  dnsServer.start(DNS_PORT, "*", apIP); // redirect dns request to AP ip
-  
-  MDNS.begin("esp8266", WiFi.softAPIP());
-  Serial.println("Ready");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.softAPIP());
-  
-  //File system begin
-  LittleFS.begin();
+  WiFi.softAP("Lolin-D1-Mini"); 
 
+  // DNS "*" means all domains go to the D1 Mini
+  dnsServer.start(DNS_PORT, "*", apIP);
 
-   //redirect all traffic to index.html
-server.onNotFound([]() {
-  if(!handleFileRead(server.uri())){
-    const char *metaRefreshStr = "<head><meta http-equiv=\"refresh\" content=\"0; url=http://192.168.4.1/index.html\" /></head><body><p>redirecting...</p></body>";
-    server.send(200, "text/html", metaRefreshStr);
-  }
-});
+  // 1. Handle the main page
+  server.on("/", handleRoot);
+
+  // 2. Catch common "Connectivity Check" URLs and REDIRECT them
+  server.on("/generate_204", redirectToPortal);       // Android
+  server.on("/hotspot-detect.html", redirectToPortal); // iOS
+  server.on("/canonical.html", redirectToPortal);      // iOS
+  server.on("/success.txt", redirectToPortal);        // OSX
+  server.on("/ncsi.txt", redirectToPortal);           // Windows
+
+  // 3. Catch-all: If the phone asks for anything else (like google.com)
+  server.onNotFound(redirectToPortal);
 
   server.begin();
-
 }
 
 void loop() {
   dnsServer.processNextRequest();
   server.handleClient();
-  delay(50);
-
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(1000);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(1000);
-}
-
-
-String getContentType(String filename){
-if(server.hasArg("download")) return "application/octet-stream";
-else if(filename.endsWith(".htm")) return "text/html";
-else if(filename.endsWith(".html")) return "text/html";
-else if(filename.endsWith(".css")) return "text/css";
-else if(filename.endsWith(".js")) return "application/javascript";
-else if(filename.endsWith(".png")) return "image/png";
-else if(filename.endsWith(".gif")) return "image/gif";
-else if(filename.endsWith(".jpg")) return "image/jpeg";
-else if(filename.endsWith(".ico")) return "image/x-icon";
-else if(filename.endsWith(".xml")) return "text/xml";
-else if(filename.endsWith(".mp4")) return "video/mp4";
-else if(filename.endsWith(".pdf")) return "application/x-pdf";
-else if(filename.endsWith(".zip")) return "application/x-zip";
-else if(filename.endsWith(".gz")) return "application/x-gzip";
-return "text/plain";
-}
-
-//Given a file path, look for it in the LittleFS file storage. Returns true if found, returns false if not found.
-bool handleFileRead(String path){
-if(path.endsWith("/")) path += "index.html";
-String contentType = getContentType(path);
-String pathWithGz = path + ".gz";
-if(LittleFS.exists(pathWithGz) || LittleFS.exists(path)){
-  if(LittleFS.exists(pathWithGz))
-    path += ".gz";
-  File file = LittleFS.open(path, "r");
-  size_t sent = server.streamFile(file, contentType);
-  file.close();
-  return true;
-}
-return false;
 }
