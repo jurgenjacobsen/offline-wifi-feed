@@ -17,7 +17,7 @@
   "scripts": {
     "prettier": "prettier --check \"src/**/*.html\" \"package.json\" \".prettierrc\"",
     "prettier:write": "prettier --write \"src/**/*.html\" \"package.json\" \".prettierrc\"",
-    "minify": "html-minifier-terser --input-dir ./src --output-dir ./data --collapse-whitespace --collapse-boolean-attributes --remove-comments --remove-empty-attributes --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-style-link-type-attributes --remove-attribute-quotes --sort-attributes --sort-class-name --use-short-doctype --minify-css true --minify-js true"
+    "compact": "html-minifier-terser --input-dir ./src --output-dir ./data --collapse-whitespace --collapse-boolean-attributes --remove-comments --remove-empty-attributes --remove-redundant-attributes --remove-script-type-attributes --remove-style-link-type-attributes --sort-attributes --sort-class-name --use-short-doctype --minify-css true --minify-js true"
   },
   "author": "jurgenjacobsen",
   "license": "Apache-2.0",
