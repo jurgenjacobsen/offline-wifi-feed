@@ -1,0 +1,33 @@
+name: Web Integrity Check
+
+on:
+  push:
+    paths:
+      - 'data/**'
+  pull_request:
+    paths:
+      - 'data/**'
+
+jobs:
+  lint-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Linters
+        run: |
+          npm install -g htmlhint stylelint stylelint-config-standard
+
+      - name: Verify HTML Syntax
+        # Checks for unclosed tags or missing doctype which can break popups
+        run: htmlhint "data/*.html"
+
+      - name: Verify CSS Styles
+        # Validates the CSS inside your <style> tags
+        run: stylelint "data/*.html" --custom-syntax postcss-html
