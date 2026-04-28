@@ -9,7 +9,49 @@ IPAddress apIP(8, 8, 8, 8);
 DNSServer dnsServer;
 ESP8266WebServer server(80);
 
+IPAddress recentIPs[20];
+int recentIPCount = 0;
+
+void incrementCounter() {
+  IPAddress currentIP = server.client().remoteIP();
+
+  // Check if IP is in the "recently seen" cache
+  for (int i = 0; i < recentIPCount; i++) {
+    if (recentIPs[i] == currentIP) {
+      return; // Already counted this session, skip
+    }
+  }
+
+  // Add to cache (FIFO)
+  if (recentIPCount < 20) {
+    recentIPs[recentIPCount++] = currentIP;
+  } else {
+    for (int i = 0; i < 19; i++) recentIPs[i] = recentIPs[i + 1];
+    recentIPs[19] = currentIP;
+  }
+
+  int count = 0;
+  if (LittleFS.exists("/counter.txt")) {
+    File file = LittleFS.open("/counter.txt", "r");
+    if (file) {
+      count = file.readString().toInt();
+      file.close();
+    }
+  }
+
+  count++;
+
+  File file = LittleFS.open("/counter.txt", "w");
+  if (file) {
+    file.print(count);
+    file.close();
+    Serial.print("New Unique Visit! Total Count: ");
+    Serial.println(count);
+  }
+}
+
 void handleIndex() {
+  incrementCounter();
   File file = LittleFS.open("/index.html", "r");
   if (!file) {
     server.send(500, "text/plain", "Error: index.html not found. Check LittleFS upload.");
@@ -33,6 +75,15 @@ void setup() {
 
   if (!LittleFS.begin()) {
     Serial.println("LittleFS Mount Failed");
+  } else {
+    if (LittleFS.exists("/counter.txt")) {
+      File file = LittleFS.open("/counter.txt", "r");
+      if (file) {
+        Serial.print("Current Saved Count: ");
+        Serial.println(file.readString());
+        file.close();
+      }
+    }
   }
 
   WiFi.mode(WIFI_AP);
