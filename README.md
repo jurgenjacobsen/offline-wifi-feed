@@ -13,6 +13,7 @@ An offline WiFi feed allowing users to access content without an internet connec
 - [x] Add first reading content
 - [ ] Add Setup Guide
 - [ ] Automate Content Updates
+- [ ] User view / connection count
  
 ## Sources
 [The Electric Typewriter - Short Articles and Essays](https://tetw.org/Short_Articles_and_Essays)
